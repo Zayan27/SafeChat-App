@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeChat</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <section class="chat__section">
+        <div class="brand">
+            <i class="fa-regular fa-message"></i>
+            <h1>SafeChat</h1>
+        </div>
+        <div class="message_area"></div>
+        <div>
+            <textarea id="textarea" cols="30" rows="1" placeholder="Write a message"></textarea>
+            <ul class="buttons">
+                <li><button id="encrypt">Encrypt</button></li>
+                <li><button id="decrypt">Decrypt</button></li>
+            </ul>
+        </div>
+    </section>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js" integrity="sha512-E8QSvWZ0eCLGk4km3hxSsNmGWbLtSCSUcewDQPQWZF6pEU8GlT8a5fF32wOl1i8ftdMhssTrF/OhyGWwonTcXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/client.js"></script>
+    <script>
+        document.getElementById("encrypt").addEventListener("click", () => {
+            const textarea = document.getElementById("textarea");
+            const password = 'my-password';
+            const text = textarea.value;
+
+            if (text === '') {
+                console.log('Please fill in the text');
+            } else {
+                const encrypted = CryptoJS.DES.encrypt(text, password).toString();
+                localStorage.setItem("encryptedMessage", encrypted);
+                textarea.value = encrypted;
+                console.log('Encrypted:', encrypted);
+            }
+        });
+
+        document.getElementById("decrypt").addEventListener("click", () => {
+            const textarea = document.getElementById("textarea");
+            const password = 'my-password';
+            const encrypted = localStorage.getItem("encryptedMessage");
+
+            if (encrypted) {
+                const decrypted = CryptoJS.DES.decrypt(encrypted, password).toString(CryptoJS.enc.Utf8);
+                textarea.value = decrypted;
+                console.log('Decrypted:', decrypted);
+            } else {
+                console.log('No encrypted message found');
+            }
+        });
+    </script>
+</body>
+</html>
